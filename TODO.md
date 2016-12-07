@@ -1,0 +1,5 @@
+- add license
+- get LA-CC
+- add blob image column
+- add table for images
+- add Spec C

@@ -1,0 +1,135 @@
+<p>Help on module cinemasqlpy.a in cinemasqlpy:</p>
+<p>NAME
+    cinemasqlpy.a - This is an apsw virtual table interface to Cinema Spec A.</p>
+<p>DESCRIPTION
+    In here are defined 3 things:</p>
+<pre><code>1. The cursor
+2. The table
+3. The module
+
+You have to tell apsw about your module, which will
+then allow you to attach to a cinema database and
+be able to create cursors on it. The minimal setup is:
+
+```python
+# given a table name and path to the database with the info.json
+import apsw
+import cinemasqlpy.a as A
+
+conn = apsw.Connection(':memory:')
+cursor = conn.cursor()
+module = A.Module()
+conn.createmodule('CinemaA', module)
+
+cursor.execute('drop table if exists %s' % table)
+cursor.execute('create virtual table %s using CinemaA(%s)' % (table, path))
+```
+</code></pre>
+<p>CLASSES
+    builtins.object
+        Cursor
+        Module
+        Table</p>
+<pre><code>class Cursor(builtins.object)
+ |  An apsw cursor implementation to a Cinema Spec A database.
+ |  
+ |  Methods defined here:
+ |  
+ |  Close(self)
+ |  
+ |  Column(self, num)
+ |  
+ |  Eof(self)
+ |  
+ |  Filter(self, num, name, cons)
+ |  
+ |  Next(self)
+ |  
+ |  Rowid(self)
+ |  
+ |  __init__(self, cols, pattern, path)
+ |      Takes the columns, filename pattern, and path to the cinema database.
+ |  
+ |  ----------------------------------------------------------------------
+ |  Data descriptors defined here:
+ |  
+ |  __dict__
+ |      dictionary for instance variables (if defined)
+ |  
+ |  __weakref__
+ |      list of weak references to the object (if defined)
+
+class Module(builtins.object)
+ |  An apsw virtual table implementation to a Cinema Spec A database.
+ |  
+ |  Methods defined here:
+ |  
+ |  Connect = Create(self, conn, mod, db, name, *vtargs)
+ |  
+ |  Create(self, conn, mod, db, name, *vtargs)
+ |      Takes an apsw connection, module, database, tablename, and additional
+ |      creation arguments which are all passed via the SQL create virtual table
+ |      command. Returns a tuple of (SQL create table string, Cinema A apsw table object).
+ |  
+ |  __init__(self)
+ |      Initialize self.  See help(type(self)) for accurate signature.
+ |  
+ |  ----------------------------------------------------------------------
+ |  Data descriptors defined here:
+ |  
+ |  __dict__
+ |      dictionary for instance variables (if defined)
+ |  
+ |  __weakref__
+ |      list of weak references to the object (if defined)
+
+class Table(builtins.object)
+ |  An apsw table implementation to a Cinema Spec A database.
+ |  
+ |  Methods defined here:
+ |  
+ |  BestIndex(self, cons, order)
+ |  
+ |  Destroy(self)
+ |  
+ |  Disconnect(self)
+ |  
+ |  Open(self)
+ |      # This is where the cursor is actually created for apsw.
+ |  
+ |  __init__(self, cols, pattern, path)
+ |      Takes the columns, filename pattern, and path to the cinema database.
+ |  
+ |  ----------------------------------------------------------------------
+ |  Data descriptors defined here:
+ |  
+ |  __dict__
+ |      dictionary for instance variables (if defined)
+ |  
+ |  __weakref__
+ |      list of weak references to the object (if defined)
+</code></pre>
+<p>FUNCTIONS
+    read_cinema(fn)
+        Parse a Cinema Spec A database schema.</p>
+<pre><code>    Parameters
+    ----------
+    fn : string
+        Path to the database that contains the info.json
+
+    Side-effects
+    ------------
+    None.
+
+    Returns
+    -------
+    (valstr, cols, pattern)
+        valstr : string
+            A SQL substring for describing the Cinema DB as values schema
+        cols : a list of lists of values 
+            The values of the range parameters in the Cinema DB
+        pattern : string
+            The filename pattern for columns to image filename
+</code></pre>
+<p>FILE
+    /home/woodring/conda3/envs/test/lib/python3.5/site-packages/cinemasqlpy/a.py</p>

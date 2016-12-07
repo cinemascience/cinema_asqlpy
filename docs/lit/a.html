@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html;charset=utf-8">
+  <title>a.py</title>
+  <link rel="stylesheet" href="pycco.css">
+</head>
+<body>
+<div id='container'>
+  <div id="background"></div>
+  <div class='section'>
+    <div class='docs'><h1>a.py</h1></div>
+  </div>
+  <div class='clearall'>
+  <div class='section' id='section-0'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-0'>#</a>
+      </div>
+      <p>This is an apsw virtual table interface to Cinema Spec A.</p>
+<p>In here are defined 3 things:</p>
+<ol>
+<li>The cursor</li>
+<li>The table</li>
+<li>The module</li>
+</ol>
+<p>You have to tell apsw about your module, which will
+then allow you to attach to a cinema database and
+be able to create cursors on it. The minimal setup is:</p>
+<pre><code># given a table name and path to the database with the info.json
+import apsw
+import cinemasqlpy.a as A
+
+conn = apsw.Connection(':memory:')
+cursor = conn.cursor()
+module = A.Module()
+conn.createmodule('CinemaA', module)
+
+cursor.execute('drop table if exists %s' % table)
+cursor.execute('create virtual table %s using CinemaA(%s)' % (table, path))
+</code></pre>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">from</span> <span class="nn">os</span> <span class="kn">import</span> <span class="n">path</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-1'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-1'>#</a>
+      </div>
+      <p>An apsw cursor implementation to a Cinema Spec A database.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="k">class</span> <span class="nc">Cursor</span><span class="p">:</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-2'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-2'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-3'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-3'>#</a>
+      </div>
+      <p>table data</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="n">_cols</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_pattern</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_path</span> <span class="o">=</span> <span class="bp">None</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-4'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-4'>#</a>
+      </div>
+      <p>cursor data</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="n">_rowid</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_limit</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_offsets</span> <span class="o">=</span> <span class="bp">None</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-5'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-5'>#</a>
+      </div>
+      <p>Takes the columns, filename pattern, and path to the cinema database.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cols</span><span class="p">,</span> <span class="n">pattern</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-6'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-6'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>        <span class="bp">self</span><span class="o">.</span><span class="n">_cols</span> <span class="o">=</span> <span class="n">cols</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_pattern</span> <span class="o">=</span> <span class="n">pattern</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_path</span> <span class="o">=</span> <span class="n">path</span>
+        
+        <span class="n">offsets</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">cols</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">cols</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
+            <span class="n">offsets</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">offsets</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">cols</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_offsets</span> <span class="o">=</span> <span class="n">offsets</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_limit</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_offsets</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">cols</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-7'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-7'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="k">def</span> <span class="nf">Close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">pass</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-8'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-8'>#</a>
+      </div>
+      <p>Column index is used to figure out to index into the columns,
+based on row id.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="k">def</span> <span class="nf">_column_index</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">i</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">_rowid</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">//</span> <span class="bp">self</span><span class="o">.</span><span class="n">_offsets</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">%</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_cols</span><span class="p">[</span><span class="n">i</span><span class="p">])</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-9'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-9'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="k">def</span> <span class="nf">Column</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">num</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">args</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_cols</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="bp">self</span><span class="o">.</span><span class="n">_column_index</span><span class="p">(</span><span class="n">i</span><span class="p">)]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_cols</span><span class="p">))]</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pattern</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">num</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">args</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_cols</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="bp">self</span><span class="o">.</span><span class="n">_column_index</span><span class="p">(</span><span class="n">i</span><span class="p">)]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_cols</span><span class="p">))]</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_path</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pattern</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>           
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">num</span> <span class="o">=</span> <span class="n">num</span> <span class="o">-</span> <span class="mi">2</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cols</span><span class="p">[</span><span class="n">num</span><span class="p">][</span><span class="bp">self</span><span class="o">.</span><span class="n">_column_index</span><span class="p">(</span><span class="n">num</span><span class="p">)]</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-10'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-10'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="k">def</span> <span class="nf">Eof</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rowid</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">_limit</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-11'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-11'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="k">def</span> <span class="nf">Filter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">cons</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_rowid</span> <span class="o">=</span> <span class="mi">1</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-12'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-12'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="k">def</span> <span class="nf">Next</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_rowid</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rowid</span> <span class="o">+</span> <span class="mi">1</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-13'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-13'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="k">def</span> <span class="nf">Rowid</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">rowid</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-14'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-14'>#</a>
+      </div>
+      <p>An apsw table implementation to a Cinema Spec A database.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="k">class</span> <span class="nc">Table</span><span class="p">:</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-15'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-15'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-16'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-16'>#</a>
+      </div>
+      <p>table data</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="n">_cols</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_pattern</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_path</span> <span class="o">=</span> <span class="bp">None</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-17'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-17'>#</a>
+      </div>
+      <p>Takes the columns, filename pattern, and path to the cinema database.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cols</span><span class="p">,</span> <span class="n">pattern</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-18'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-18'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>        <span class="bp">self</span><span class="o">.</span><span class="n">_cols</span> <span class="o">=</span> <span class="n">cols</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_pattern</span> <span class="o">=</span> <span class="n">pattern</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_path</span> <span class="o">=</span> <span class="n">path</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-19'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-19'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="k">def</span> <span class="nf">BestIndex</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cons</span><span class="p">,</span> <span class="n">order</span><span class="p">):</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-20'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-20'>#</a>
+      </div>
+      <p><em>TODO</em> create some indices
+       because it's going to be slow (everything will be a scan)</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>        <span class="k">return</span> <span class="bp">None</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-21'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-21'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="k">def</span> <span class="nf">Destroy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">pass</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-22'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-22'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="k">def</span> <span class="nf">Disconnect</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">pass</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-23'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-23'>#</a>
+      </div>
+      <p>This is where the cursor is actually created for apsw.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="k">def</span> <span class="nf">Open</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">Cursor</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_cols</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pattern</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_path</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-24'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-24'>#</a>
+      </div>
+      <p><em>Unimplemented apsw functions</em>
+def Begin(self)
+def Commit(self)
+def FindFunction(self, name, args)
+def Rename(self)
+def Rollback(self)
+def Sync(self)
+def UpdateChangeRow(self, rowid, newid, vals)
+def UpdateDeleteRow(self, rowid)
+def UpdateInsertRow(self, rowid, vals)</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-25'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-25'>#</a>
+      </div>
+      <p>Parse a Cinema Spec A database schema.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="k">def</span> <span class="nf">read_cinema</span><span class="p">(</span><span class="n">fn</span><span class="p">):</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-26'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-26'>#</a>
+      </div>
+      <p>Parameters</p>
+<hr />
+<pre><code>   fn : string
+   Path to the database that contains the info.json
+</code></pre>
+<p>Side-effects</p>
+<hr />
+<pre><code>   None.
+</code></pre>
+<p>Returns</p>
+<hr />
+<pre><code>   (valstr, cols, pattern)
+   valstr : string
+       A SQL substring for describing the Cinema DB as values schema
+   cols : a list of lists of values 
+       The values of the range parameters in the Cinema DB
+   pattern : string
+       The filename pattern for columns to image filename
+</code></pre>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="n">t</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="n">fn</span> <span class="o">+</span> <span class="s1">&#39;/info.json&#39;</span><span class="p">))</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-27'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-27'>#</a>
+      </div>
+      <p><em>TODO</em> validate metadata header (I don't think the spec A sphere example is valid...)</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-28'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-28'>#</a>
+      </div>
+      <p>scan for the parameters and only get the 'range' ones</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="n">name_pairs</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">t</span><span class="p">[</span><span class="s1">&#39;arguments&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">v</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;range&#39;</span><span class="p">:</span>
+            <span class="n">name_pairs</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">[</span><span class="s1">&#39;label&#39;</span><span class="p">]))</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-29'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-29'>#</a>
+      </div>
+      <p><em>TODO</em> throw an exception if not 'range'?</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="n">name_pairs</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">name_pairs</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-30'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-30'>#</a>
+      </div>
+      <p>create a pattern based on column order</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="n">kwargs</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">pair</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">name_pairs</span><span class="p">)),</span> <span class="n">name_pairs</span><span class="p">):</span>
+        <span class="n">kwargs</span><span class="p">[</span><span class="n">pair</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="s1">&#39;{&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;}&#39;</span>
+    <span class="n">pattern</span> <span class="o">=</span> <span class="n">t</span><span class="p">[</span><span class="s1">&#39;name_pattern&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-31'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-31'>#</a>
+      </div>
+      <p>create the (value) string for the create table
+put the values into columns ordered by name_pairs (same order as value string)</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="n">valstr</span> <span class="o">=</span> <span class="s1">&#39; (filename text,full_path text,&#39;</span>
+    <span class="n">cols</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">pair</span> <span class="ow">in</span> <span class="n">name_pairs</span><span class="p">:</span>
+        <span class="n">valstr</span> <span class="o">=</span> <span class="n">valstr</span> <span class="o">+</span> <span class="n">pair</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39; real,&#39;</span>
+        <span class="n">cols</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">t</span><span class="p">[</span><span class="s1">&#39;arguments&#39;</span><span class="p">][</span><span class="n">pair</span><span class="p">[</span><span class="mi">0</span><span class="p">]][</span><span class="s1">&#39;values&#39;</span><span class="p">]))</span>
+    <span class="n">valstr</span> <span class="o">=</span> <span class="n">valstr</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;)&#39;</span>
+
+    <span class="k">return</span> <span class="p">(</span><span class="n">valstr</span><span class="p">,</span> <span class="n">cols</span><span class="p">,</span> <span class="n">pattern</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-32'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-32'>#</a>
+      </div>
+      <p>An apsw virtual table implementation to a Cinema Spec A database.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="k">class</span> <span class="nc">Module</span><span class="p">:</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-33'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-33'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="n">_valstr</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_cols</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_pattern</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_path</span> <span class="o">=</span> <span class="bp">None</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-34'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-34'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">pass</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-35'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-35'>#</a>
+      </div>
+      <p>Takes an apsw connection, module, database, tablename, and additional</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="k">def</span> <span class="nf">Create</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">conn</span><span class="p">,</span> <span class="n">mod</span><span class="p">,</span> <span class="n">db</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="o">*</span><span class="n">vtargs</span><span class="p">):</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-36'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-36'>#</a>
+      </div>
+      <p>creation arguments which are all passed via the SQL create virtual table
+   command. Returns a tuple of (SQL create table string, Cinema A apsw table object).</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>        <span class="bp">self</span><span class="o">.</span><span class="n">_path</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">vtargs</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> 
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_path</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">!=</span> <span class="s1">&#39;/&#39;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_path</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_valstr</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cols</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pattern</span> <span class="o">=</span> <span class="n">read_cinema</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_path</span><span class="p">)</span>
+        
+        <span class="k">return</span> <span class="p">(</span><span class="s1">&#39;create table &#39;</span> <span class="o">+</span> <span class="n">name</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_valstr</span><span class="p">,</span> <span class="n">Table</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_cols</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pattern</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_path</span><span class="p">))</span>
+    
+    <span class="n">Connect</span> <span class="o">=</span> <span class="n">Create</span>
+
+</pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+</div>
+</body>
