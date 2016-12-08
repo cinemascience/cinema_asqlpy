@@ -22,25 +22,25 @@ on *Cinema* Spec A through *Python*.
 
 1. Install *apsw*
 
-*cinemasqlpy* is dependent on *apsw* and should be
-installed prior to using this package. The author
-of *apsw* suggests cloning the repository and installing
-from the repo. There is a *pypi* package, but
-it is not maintained by the author.
+   *cinemasqlpy* is dependent on *apsw* and should be
+   installed prior to using this package. The author
+   of *apsw* suggests cloning the repository and installing
+   from the repo. There is a *pypi* package, but
+   it is not maintained by the author.
 
-```bash
-$ git clone https://github.com/rogerbinns/apsw
-$ cd apsw
-$ pip install .
-```
+   ```bash
+   $ git clone https://github.com/rogerbinns/apsw.git
+   $ cd apsw
+   $ pip install .
+   ```
 
 2. Install *cinemasqlpy*
 
-```bash
-$ git clone <TODO path to repository>
-$ cd cinemasqlpy
-$ pip install .
-```
+   ```bash
+   $ git clone https://github.com/dhrogers/cinemasqlpy.git
+   $ cd cinemasqlpy
+   $ pip install .
+   ```
 
 *Example Spec A Usage*
 ======================

@@ -1,3 +1,4 @@
+- add more complex json to test
 - add license
 - get LA-CC
 - add blob image column

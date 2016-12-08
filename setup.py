@@ -27,7 +27,7 @@ setup(
         'Programming Language :: Python :: 3',
         ],
     keywords = 'Cinema apsw SQL SQLite',
-    packages = find_packages(exclude=['examples', 'test']),
+    packages = find_packages(exclude=['docs', 'test']),
 
     # There isn't a requirements on apsw, because:
     # The author of apsw doesn't suggest using the pypi version,
