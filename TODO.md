@@ -4,3 +4,4 @@
 - add blob image column
 - add table for images
 - add Spec C
+- add Travis or Jenkins
