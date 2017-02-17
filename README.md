@@ -1,8 +1,8 @@
-Cinema SQL for Python (cinemasqlpy)
-====================================
+Cinema Spec A SQL for Python (cinemasqlpy)
+=========================================
 
 *cinemasqlpy* is a package that allows *SQL* queries
-on *Cinema* databases in *Python*.
+on *Cinema* Spec A databases in *Python*.
 
 It does so by building a "virtual table" interface to
 *Cinema* to *SQLite* via *apsw* (a *SQLite* interface
