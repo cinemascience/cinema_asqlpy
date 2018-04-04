@@ -1,5 +1,5 @@
 import apsw
-import cinemasqlpy.a as A
+import cinema_asqlpy.a as A
 
 # open a connection to the cinema database
 def cinema_cursor(path):

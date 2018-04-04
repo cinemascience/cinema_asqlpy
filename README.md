@@ -1,7 +1,7 @@
-Cinema Spec A SQL for Python (cinemasqlpy)
+Cinema Spec A SQL for Python (cinema_asqlpy)
 =========================================
 
-*cinemasqlpy* is a package that allows *SQL* queries
+*cinema_asqlpy* is a package that allows *SQL* queries
 on *Cinema* Spec A databases in *Python*.
 
 It does so by building a "virtual table" interface to
@@ -22,7 +22,7 @@ on *Cinema* Spec A through *Python*.
 
 1. Install *apsw*
 
-   *cinemasqlpy* is dependent on *apsw* and should be
+   *cinema_asqlpy* is dependent on *apsw* and should be
    installed prior to using this package. The author
    of *apsw* suggests cloning the repository and installing
    from the repo. There is a *pypi* package, but
@@ -34,11 +34,11 @@ on *Cinema* Spec A through *Python*.
    $ pip install .
    ```
 
-2. Install *cinemasqlpy*
+2. Install *cinema_asqlpy*
 
    ```bash
-   $ git clone https://github.com/dhrogers/cinemasqlpy.git
-   $ cd cinemasqlpy
+   $ git clone https://github.com/cinemascience/cinema_asqlpy.git
+   $ cd cinema_asqlpy
    $ pip install .
    ```
 
@@ -47,7 +47,7 @@ on *Cinema* Spec A through *Python*.
 
 ```python
 import apsw
-import cinemasqlpy.a as A
+import cinema_asqlpy.a as A
 
 table = 'cinema'
 path = '/home/user/mycinema.cdb/image/'

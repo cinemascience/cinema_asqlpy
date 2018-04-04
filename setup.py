@@ -11,7 +11,7 @@ with(open(path.join(here, 'VERSION'), encoding='utf-8')) as f:
     version = f.read()
 
 setup(
-    name = 'cinemasqlpy',
+    name = 'cinema_asqlpy',
     version = version.strip(),
     description = 'An apsw/SQLite interface to Cinema databases.',
     long_description = longdesc,

@@ -1,5 +1,5 @@
 import apsw
-import cinemasqlpy.a as A
+import cinema_asqlpy.a as A
 
 table = 'cinema'
 path = 'test.cdb/image/'
